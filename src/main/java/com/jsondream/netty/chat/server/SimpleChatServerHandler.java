@@ -13,7 +13,8 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
-public class SimpleChatServerHandler extends SimpleChannelInboundHandler<String> {
+@SuppressWarnings("rawtypes")
+public class SimpleChatServerHandler extends SimpleChannelInboundHandler<Object> {
 
 	public static ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 	public static ConcurrentHashMap<String, Channel> channelMap = new ConcurrentHashMap<>();
@@ -39,7 +40,7 @@ public class SimpleChatServerHandler extends SimpleChannelInboundHandler<String>
 	}
 
 	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, String s) throws Exception { // (4)
+	protected void messageReceived(ChannelHandlerContext ctx, Object s) throws Exception { // (4)
 		Channel incoming = ctx.channel();
 		// for (Channel channel : channels) {
 		// if (channel != incoming){
@@ -49,7 +50,7 @@ public class SimpleChatServerHandler extends SimpleChannelInboundHandler<String>
 		// channel.writeAndFlush("[you]" + s + "\n");
 		// }
 		// }
-		Message message = JSON.parseObject(s, Message.class);
+		Message message = JSON.parseObject((String)s, Message.class);
 		if ("login".equals(message.getMsg())) {
 			channelMap.put(message.getUserId(), incoming);
 			incoming.writeAndFlush("你已经登录成功\n");

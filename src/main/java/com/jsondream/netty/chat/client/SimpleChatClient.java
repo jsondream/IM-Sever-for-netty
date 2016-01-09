@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 
 import com.alibaba.fastjson.JSON;
 import com.jsondream.netty.chat.business.Message;
+import com.jsondream.netty.chat.util.ClientUtil;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -32,14 +33,14 @@ public class SimpleChatClient {
 					.handler(new SimpleChatClientInitializer());
 			Channel channel = bootstrap.connect(host, port).sync().channel();
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-			// random id
-			int id = (int) (Math.random() * 10);
 			while (true) {
 //				channel.writeAndFlush(id + "," + in.readLine() + "\r\n");
 				String inputString = in.readLine();
 				String[] inputObj = inputString.split(",");
 				Message message = new Message(inputObj[0],inputObj[1],inputObj[2]);
-				channel.writeAndFlush(JSON.toJSONString(message)+ "\r\n");
+				String messageString = JSON.toJSONString(message);
+				byte[] messageByte = ClientUtil.getMessageByte(messageString);
+				channel.writeAndFlush(messageByte);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
