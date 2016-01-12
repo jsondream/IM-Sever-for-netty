@@ -48,7 +48,7 @@ public class SimpleChatServer {
         if (args.length > 0) {
             port = Integer.parseInt(args[0]);
         } else {
-            port = 8011;
+            port = 8012;
         }
         new SimpleChatServer(port).run();
 

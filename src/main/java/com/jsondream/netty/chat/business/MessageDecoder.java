@@ -12,9 +12,10 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.MessageToMessageDecoder;
 
-public class MessageDecoder extends LengthFieldBasedFrameDecoder {
+public class MessageDecoder extends MessageToMessageDecoder<ByteBuf> {
 
-	/*protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+	@Override
+	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		// TODO Auto-generated method stub
 		final byte[] array;
 		final int length = in.readableBytes();
@@ -22,9 +23,9 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
 		in.getBytes(in.readerIndex(), array, 0, length);
 		MessagePack messagePack = new MessagePack();
         out.add(messagePack.read(array));
-	}*/
+	}
 
-	public MessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength) {
+	/*public MessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength) {
 		super(maxFrameLength, lengthFieldOffset, lengthFieldLength);
 		// TODO Auto-generated constructor stub
 	}
@@ -44,6 +45,6 @@ public class MessageDecoder extends LengthFieldBasedFrameDecoder {
 		return messagePack.read(array);
 		// TODO Auto-generated method stub
 		
-	}
+	}*/
 
 }

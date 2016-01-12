@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.msgpack.MessagePack;
+import org.msgpack.type.Value;
 
 import com.alibaba.fastjson.JSON;
 import com.jsondream.netty.chat.business.Message;
@@ -16,7 +17,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 @SuppressWarnings("rawtypes")
-public class SimpleChatServerHandler extends SimpleChannelInboundHandler<Message> {
+public class SimpleChatServerHandler extends SimpleChannelInboundHandler<Object> {
 
 	public static ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 	public static ConcurrentHashMap<String, Channel> channelMap = new ConcurrentHashMap<>();
@@ -42,7 +43,7 @@ public class SimpleChatServerHandler extends SimpleChannelInboundHandler<Message
 	}
 
 	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, Message s) throws Exception { // (4)
+	protected void messageReceived(ChannelHandlerContext ctx, Object s) throws Exception { // (4)
 		Channel incoming = ctx.channel();
 		// for (Channel channel : channels) {
 		// if (channel != incoming){
@@ -52,16 +53,22 @@ public class SimpleChatServerHandler extends SimpleChannelInboundHandler<Message
 		// channel.writeAndFlush("[you]" + s + "\n");
 		// }
 		// }
-		final Message message = s;
+		MessagePack msgPack= new MessagePack();
+		
+		final Message message = new Message();
+		msgPack.convert((Value)s, message);
 		if ("login".equals(message.getMsg())) {
 			channelMap.put(message.getUserId(), incoming);
-			incoming.writeAndFlush("你已经登录成功\n");
+		
+			Message sendMessage = new Message(message.getUserId(),message.getUserId(),"你已经登录成功");
+//			byte[] data = msgPack.write(sendMessage);
+			incoming.writeAndFlush(sendMessage);
 		} else {
 			Channel channel = channelMap.get(message.getToUserId());
 			if (channel == null) {
 				return;
 			}
-			channel.writeAndFlush(s);
+			channel.writeAndFlush(message);
 //			channel.writeAndFlush("[来自" + message.getUserId() + "的消息]:" 
 //			+ message.getMsg() + "\n");
 		}

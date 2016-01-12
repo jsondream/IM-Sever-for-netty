@@ -3,6 +3,7 @@ package com.jsondream.netty.chat.business;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
+@org.msgpack.annotation.Message
 public class Message implements Serializable {
 	private String userId;
 	private String toUserId;
