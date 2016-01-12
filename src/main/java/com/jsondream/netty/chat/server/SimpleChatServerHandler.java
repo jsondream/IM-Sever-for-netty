@@ -3,6 +3,8 @@ package com.jsondream.netty.chat.server;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.msgpack.MessagePack;
+
 import com.alibaba.fastjson.JSON;
 import com.jsondream.netty.chat.business.Message;
 
@@ -14,7 +16,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
 @SuppressWarnings("rawtypes")
-public class SimpleChatServerHandler extends SimpleChannelInboundHandler<Object> {
+public class SimpleChatServerHandler extends SimpleChannelInboundHandler<Message> {
 
 	public static ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 	public static ConcurrentHashMap<String, Channel> channelMap = new ConcurrentHashMap<>();
@@ -40,7 +42,7 @@ public class SimpleChatServerHandler extends SimpleChannelInboundHandler<Object>
 	}
 
 	@Override
-	protected void messageReceived(ChannelHandlerContext ctx, Object s) throws Exception { // (4)
+	protected void messageReceived(ChannelHandlerContext ctx, Message s) throws Exception { // (4)
 		Channel incoming = ctx.channel();
 		// for (Channel channel : channels) {
 		// if (channel != incoming){
@@ -50,7 +52,7 @@ public class SimpleChatServerHandler extends SimpleChannelInboundHandler<Object>
 		// channel.writeAndFlush("[you]" + s + "\n");
 		// }
 		// }
-		Message message = JSON.parseObject((String)s, Message.class);
+		final Message message = s;
 		if ("login".equals(message.getMsg())) {
 			channelMap.put(message.getUserId(), incoming);
 			incoming.writeAndFlush("你已经登录成功\n");
@@ -59,8 +61,9 @@ public class SimpleChatServerHandler extends SimpleChannelInboundHandler<Object>
 			if (channel == null) {
 				return;
 			}
-			channel.writeAndFlush("[来自" + message.getUserId() + "的消息]:" 
-			+ message.getMsg() + "\n");
+			channel.writeAndFlush(s);
+//			channel.writeAndFlush("[来自" + message.getUserId() + "的消息]:" 
+//			+ message.getMsg() + "\n");
 		}
 
 	}

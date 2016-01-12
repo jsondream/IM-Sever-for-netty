@@ -15,19 +15,14 @@ import io.netty.handler.codec.string.StringEncoder;
 
 public class SimpleChatClientInitializer extends ChannelInitializer<SocketChannel> {
 
-    @Override
+	@Override
     public void initChannel(SocketChannel ch) throws Exception {
-        ChannelPipeline pipeline = ch.pipeline();
-
-//        pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
-//        pipeline.addLast("encoder", new StringEncoder());
-//        pipeline.addLast("decoder", new StringDecoder());
-//        pipeline.addLast("handler", new SimpleChatClientHandler());
-        
-        pipeline.addLast("LengthFieldBasedFrameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,1,0,1));
-//        pipeline.addLast("decode", new StringDecoder());
-        pipeline.addLast("LengthFieldPrepender", new LengthFieldPrepender(1));
-//        pipeline.addLast("encode", new StringEncoder()); 
+        ChannelPipeline pipeline = ch.pipeline(); 
+//        pipeline.addLast("frameDecode", new LengthFieldBasedFrameDecoder(1024*1024,4,4));
+//        pipeline.addLast("decode", new MessageDecoder());
+        pipeline.addLast("decode", new MessageDecoder(1024*1024,4,4));
+        pipeline.addLast("FrameEncoder", new LengthFieldPrepender(4));
+        pipeline.addLast("encode", new MessageEncoder());
         pipeline.addLast("handler", new SimpleChatClientHandler());
     }
 

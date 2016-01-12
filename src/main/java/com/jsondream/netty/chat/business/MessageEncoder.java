@@ -1,5 +1,7 @@
 package com.jsondream.netty.chat.business;
 
+import org.msgpack.MessagePack;
+
 import com.jsondream.netty.chat.SerializeUtil;
 
 import io.netty.buffer.ByteBuf;
@@ -11,8 +13,10 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
 	@Override
 	protected void encode(ChannelHandlerContext ctx, Message msg, ByteBuf out) throws Exception {
 		// TODO Auto-generated method stub
-		byte[] data = SerializeUtil.serialize(msg);
-        out.writeInt(data.length);
+//		byte[] data = SerializeUtil.serialize(msg);
+		MessagePack messagePack = new MessagePack();
+		byte[] data = messagePack.write(msg);
+//        out.writeInt(data.length);
         out.writeBytes(data);
 	}
 

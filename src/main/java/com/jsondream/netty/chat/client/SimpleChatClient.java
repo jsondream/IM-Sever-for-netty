@@ -40,7 +40,7 @@ public class SimpleChatClient {
 				Message message = new Message(inputObj[0],inputObj[1],inputObj[2]);
 				String messageString = JSON.toJSONString(message);
 				byte[] messageByte = ClientUtil.getMessageByte(messageString);
-				channel.writeAndFlush(messageByte);
+				channel.writeAndFlush(message);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
