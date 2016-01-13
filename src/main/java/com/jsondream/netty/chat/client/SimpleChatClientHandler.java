@@ -14,6 +14,6 @@ public class SimpleChatClientHandler extends  SimpleChannelInboundHandler<Object
     	MessagePack msgPack = new MessagePack();
     	final Message s = new Message();
 		msgPack.convert((Value)message, s);
-        System.out.println("["+((Message) s).getUserId()+"]对你说:"+((Message) s).getMsg());
+        System.out.println("["+s.getUserId()+"]对你说:"+s.getMsg());
     }
 }
