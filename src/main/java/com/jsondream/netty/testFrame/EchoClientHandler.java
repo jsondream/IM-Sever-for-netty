@@ -31,7 +31,7 @@ public class EchoClientHandler extends ChannelHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object s) throws Exception {
 		System.out.println(s);
-		ctx.write(s);
+		// ctx.write(s);
 	}
 
 	@Override
