@@ -14,19 +14,20 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 
 public class MessageDecoder extends MessageToMessageDecoder<ByteBuf> {
 
-	@Override
-	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-		// TODO Auto-generated method stub
-		final byte[] array;
-		final int length = in.readableBytes();
-		array = new byte[length];
-		in.getBytes(in.readerIndex(), array, 0, length);
-		MessagePack messagePack = new MessagePack();
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out)
+        throws Exception {
+        // TODO Auto-generated method stub
+        final byte[] array;
+        final int length = in.readableBytes();
+        array = new byte[length];
+        in.getBytes(in.readerIndex(), array, 0, length);
+        MessagePack messagePack = new MessagePack();
         out.add(messagePack.read(array));
-	}
+    }
 
 	/*public MessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength) {
-		super(maxFrameLength, lengthFieldOffset, lengthFieldLength);
+    super(maxFrameLength, lengthFieldOffset, lengthFieldLength);
 		// TODO Auto-generated constructor stub
 	}
 

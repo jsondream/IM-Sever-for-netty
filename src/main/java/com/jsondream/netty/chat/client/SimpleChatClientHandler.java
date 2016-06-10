@@ -8,12 +8,12 @@ import com.jsondream.netty.chat.business.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-public class SimpleChatClientHandler extends  SimpleChannelInboundHandler<Object> {
+public class SimpleChatClientHandler extends SimpleChannelInboundHandler<Object> {
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, Object message) throws Exception {
-    	MessagePack msgPack = new MessagePack();
-    	final Message s = new Message();
-		msgPack.convert((Value)message, s);
-        System.out.println("["+s.getUserId()+"]对你说:"+s.getMsg());
+        MessagePack msgPack = new MessagePack();
+        final Message s = new Message();
+        msgPack.convert((Value) message, s);
+        System.out.println("[" + s.getUserId() + "]对你说:" + s.getMsg());
     }
 }

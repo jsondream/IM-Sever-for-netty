@@ -16,22 +16,21 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
 public class SimpleChatServerInitializer extends ChannelInitializer<SocketChannel> {
-	@Override
+    @Override
     public void initChannel(SocketChannel ch) throws Exception {
-         ChannelPipeline pipeline = ch.pipeline();
+        ChannelPipeline pipeline = ch.pipeline();
 
-//        pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
-//        pipeline.addLast("decode", new StringDecoder());        
-         //pipeline.addLast("LengthFieldBasedFrameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,1,0,1));
+        //        pipeline.addLast("framer", new DelimiterBasedFrameDecoder(8192, Delimiters.lineDelimiter()));
+        //        pipeline.addLast("decode", new StringDecoder());
+        //pipeline.addLast("LengthFieldBasedFrameDecoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,1,0,1));
 
         //pipeline.addLast("LengthFieldPrepender", new LengthFieldPrepender(1));
-//       pipeline.addLast("encode", new StringEncoder());
-//        pipeline.addLast("decoder", new FixedLengthFrameDecoder(20));
-//        pipeline.addLast("handler", new SimpleChatServerHandler());
-//        System.out.println("SimpleChatClient:"+ch.remoteAddress() +"连接上");
-        
+        //       pipeline.addLast("encode", new StringEncoder());
+        //        pipeline.addLast("decoder", new FixedLengthFrameDecoder(20));
+        //        pipeline.addLast("handler", new SimpleChatServerHandler());
+        //        System.out.println("SimpleChatClient:"+ch.remoteAddress() +"连接上");
 
-        pipeline.addLast("frameDecode", new LengthFieldBasedFrameDecoder(1024*1024,0,2,0,2));
+        pipeline.addLast("frameDecode", new LengthFieldBasedFrameDecoder(1024 * 1024, 0, 2, 0, 2));
         pipeline.addLast("decode", new MessageDecoder());
         pipeline.addLast("FrameEncoder", new LengthFieldPrepender(2));
         pipeline.addLast("encode", new MessageEncoder());

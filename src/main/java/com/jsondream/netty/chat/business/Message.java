@@ -5,54 +5,54 @@ import java.io.Serializable;
 @SuppressWarnings("serial")
 @org.msgpack.annotation.Message
 public class Message implements Serializable {
-	private String userId;
-	private String toUserId;
-	private String msg;
+    private String userId;
+    private String toUserId;
+    private String msg;
 
-	public Message(){
-		
-	}
-	public Message(String userId, String msg) {
-		// TODO Auto-generated constructor stub
-		this.userId = userId;
-		this.msg = msg;
-	}
+    public Message() {
 
-	public Message(String userId, String toUserId, String msg) {
-		// TODO Auto-generated constructor stub
-		this.userId = userId;
-		this.toUserId = toUserId;
-		this.msg = msg;
-	}
+    }
 
-	public String getUserId() {
-		return userId;
-	}
+    public Message(String userId, String msg) {
+        // TODO Auto-generated constructor stub
+        this.userId = userId;
+        this.msg = msg;
+    }
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+    public Message(String userId, String toUserId, String msg) {
+        // TODO Auto-generated constructor stub
+        this.userId = userId;
+        this.toUserId = toUserId;
+        this.msg = msg;
+    }
 
-	public String getMsg() {
-		return msg;
-	}
+    public String getUserId() {
+        return userId;
+    }
 
-	public void setMsg(String msg) {
-		this.msg = msg;
-	}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-	public String getToUserId() {
-		return toUserId;
-	}
+    public String getMsg() {
+        return msg;
+    }
 
-	public void setToUserId(String toUserId) {
-		this.toUserId = toUserId;
-	}
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
 
-	@Override
-	public String toString() {
-		return "Message [userId=" + userId + ", toUserId=" + toUserId + ", msg=" + msg + "]";
-	}
+    public String getToUserId() {
+        return toUserId;
+    }
 
-	
+    public void setToUserId(String toUserId) {
+        this.toUserId = toUserId;
+    }
+
+    @Override
+    public String toString() {
+        return "Message [userId=" + userId + ", toUserId=" + toUserId + ", msg=" + msg + "]";
+    }
+
 }
