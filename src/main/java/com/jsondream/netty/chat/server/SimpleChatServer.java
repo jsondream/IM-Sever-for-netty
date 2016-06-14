@@ -24,6 +24,7 @@ public class SimpleChatServer {
              .channel(NioServerSocketChannel.class) // (3)
              .childHandler(new SimpleChatServerInitializer())  //(4)
              .option(ChannelOption.SO_BACKLOG, 128)          // (5)
+                .option(ChannelOption.TCP_NODELAY,true)
              .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
 
             System.out.println("SimpleChatServer 启动了");
