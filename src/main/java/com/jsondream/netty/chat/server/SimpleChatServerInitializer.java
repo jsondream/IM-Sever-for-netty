@@ -14,6 +14,7 @@ import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.timeout.IdleStateHandler;
 
 public class SimpleChatServerInitializer extends ChannelInitializer<SocketChannel> {
     @Override
@@ -30,6 +31,7 @@ public class SimpleChatServerInitializer extends ChannelInitializer<SocketChanne
         //        pipeline.addLast("handler", new SimpleChatServerHandler());
         //        System.out.println("SimpleChatClient:"+ch.remoteAddress() +"连接上");
 
+        pipeline.addLast("HBeat", new IdleStateHandler(70, 60, 0));// 心跳
         pipeline.addLast("frameDecode", new LengthFieldBasedFrameDecoder(1024 * 1024, 0, 2, 0, 2));
         pipeline.addLast("decode", new MessageDecoder());
         pipeline.addLast("FrameEncoder", new LengthFieldPrepender(2));

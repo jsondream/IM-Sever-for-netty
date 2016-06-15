@@ -3,6 +3,8 @@ package com.jsondream.netty.chat.server;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.netty.handler.timeout.IdleState;
+import io.netty.handler.timeout.IdleStateEvent;
 import org.msgpack.MessagePack;
 import org.msgpack.type.Value;
 
@@ -73,6 +75,27 @@ public class SimpleChatServerHandler extends SimpleChannelInboundHandler<Object>
             //			+ message.getMsg() + "\n");
         }
 
+    }
+
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt)
+        throws Exception {
+
+
+        if (evt instanceof IdleStateEvent) {
+            IdleStateEvent event = (IdleStateEvent) evt;
+            if (event.state() == IdleState.READER_IDLE) {
+	                /*读超时*/
+                System.out.println("===服务端===(READER_IDLE 读超时)");
+            } else if (event.state() == IdleState.WRITER_IDLE) {
+	                /*写超时*/
+                System.out.println("===服务端===(WRITER_IDLE 写超时)");
+                ctx.channel().close();
+            } else if (event.state() == IdleState.ALL_IDLE) {
+	                /*总超时*/
+                System.out.println("===服务端===(ALL_IDLE 总超时)");
+            }
+        }
     }
 
     @Override
