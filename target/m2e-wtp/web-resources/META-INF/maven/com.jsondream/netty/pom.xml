@@ -75,25 +75,44 @@
 
 
 	<build>
-		<finalName>test</finalName>
-		<plugins>
-			<plugin>
-				<groupId>org.mortbay.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<configuration>
-					<systemProperties>
-						<systemProperty>
-							<name>org.eclipse.jetty.server.Request.maxFormContentSize</name>
-							<value>500000000</value>
-						</systemProperty>
-					</systemProperties>
-					<!-- <scanIntervalSeconds>10</scanIntervalSeconds> -->
-					<webAppConfig>
-						<contextPath>/test</contextPath>
-					</webAppConfig>
-				</configuration>
-			</plugin>
-
-		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>jetty-maven-plugin</artifactId>
+					<version>8.1.11.v20130520</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>jetty-maven-plugin</artifactId>
+					<configuration>
+						<systemProperties>
+							<systemProperty>
+								<name>org.eclipse.jetty.server.Request.maxFormContentSize</name>
+								<value>500000000</value>
+							</systemProperty>
+						</systemProperties>
+						<!-- <scanIntervalSeconds>10</scanIntervalSeconds> -->
+						<webAppConfig>
+							<contextPath>/test</contextPath>
+						</webAppConfig>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<resources>
+			<resource>
+				<directory>${basedir}\src\main\resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 	</build>
 </project>
