@@ -1,6 +1,5 @@
 package com.jsondream.netty.kdw.chat.server.connectionManager;
 
-import com.jsondream.netty.kdw.chat.HeaderCode;
 import com.jsondream.netty.kdw.chat.bean.MessageBean;
 import com.jsondream.netty.kdw.chat.protocol.ErrorCode;
 import io.netty.channel.Channel;
@@ -27,8 +26,8 @@ public class AppRouterManager {
     public static void routeLoginSuccess(Channel channel) {
 
         MessageBean baseBean = new MessageBean();
-        baseBean.setMessageType(HeaderCode.LOGIN_SUCCESS.getCode());
-
+        baseBean.setMessageType(ErrorCode.LOGIN_SUCCESS.getCode());
+        baseBean.setErrorMessage(ErrorCode.LOGIN_SUCCESS.getMsg());
         routeMessage(channel, baseBean);
     }
 
@@ -54,8 +53,8 @@ public class AppRouterManager {
     public static void routePing(Channel channel) {
 
         MessageBean baseBean = new MessageBean();
-        baseBean.setMessageType(HeaderCode.PING.getCode());
-
+        baseBean.setMessageType(ErrorCode.PING.getCode());
+        baseBean.setErrorMessage(ErrorCode.PING.getMsg());
         routeMessage(channel, baseBean);
     }
 
@@ -67,8 +66,8 @@ public class AppRouterManager {
     public static void routePong(Channel channel) {
 
         MessageBean baseBean = new MessageBean();
-        baseBean.setMessageType(HeaderCode.PONG.getCode());
-
+        baseBean.setMessageType(ErrorCode.PONG.getCode());
+        baseBean.setErrorMessage(ErrorCode.PONG.getMsg());
         routeMessage(channel, baseBean);
     }
 

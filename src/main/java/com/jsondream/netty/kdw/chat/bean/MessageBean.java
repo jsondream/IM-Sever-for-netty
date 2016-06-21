@@ -1,5 +1,6 @@
 package com.jsondream.netty.kdw.chat.bean;
 
+import com.jsondream.netty.kdw.chat.protocol.ErrorCode;
 import org.msgpack.annotation.Message;
 
 import java.io.Serializable;
@@ -15,13 +16,9 @@ public class MessageBean implements Serializable {
 
     }
 
-    public MessageBean(int messageType) {
-        // TODO Auto-generated constructor stub
-        this.messageType = messageType;
-    }
-
-    public MessageBean(int messageType, BaseBodyBean message) {
-        this.messageType = messageType;
+    public MessageBean(ErrorCode errorCode, BaseBodyBean message) {
+        this.messageType = errorCode.getCode();
+        this.errorMessage = errorCode.getMsg();
         this.message = message;
     }
 
