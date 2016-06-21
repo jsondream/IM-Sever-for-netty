@@ -45,7 +45,14 @@ public enum ErrorCode {
     /**
      * 聊天相关 4001~5000
      */
-    CAN_NOT_CHAT_WITH_YOUR_SELF(4001, "不能给您自己发送消息"), CHAT_TYPE_ERROR(4002, "聊天类型错误"),;
+    CAN_NOT_CHAT_WITH_YOUR_SELF(4001, "不能给您自己发送消息"), CHAT_TYPE_ERROR(4002, "聊天类型错误"),
+
+    /**
+     * IM信号量 5001~6000
+     */
+    LOGIN_REQUEST(5001, "登录请求"), LOGIN_SUCCESS(5002, "登录成功"),
+    CHAT_REQUEST(5003, "聊天请求"), SEND_MESSAGE(5004, "发送消息"), RECEIVE_MESSAGE(5005, "接收消息"),
+    PING(5006, "ping请求"), PONG(5007, "pong响应"),;
 
     private int code;
     private String msg;

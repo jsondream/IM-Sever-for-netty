@@ -39,13 +39,15 @@ public class AppChatServerHandler extends SimpleChannelInboundHandler<Object> {
         // 先查看是什么类型的业务
         AppMessageHandler handler= AppMessageHandlerFactory.getAppMsgHandler(message);
         // 进行相应的业务处理
-        if( handler != null){
-            handler.process(incoming,message.getMessage());
-        }else {
-            incoming.writeAndFlush(message);
-        }
+        handler.process(incoming,message.getMessage());
     }
 
+    /**
+     * 心跳超时处理
+     * @param ctx
+     * @param evt
+     * @throws Exception
+     */
     @Override
     public void userEventTriggered(ChannelHandlerContext ctx, Object evt)
         throws Exception {

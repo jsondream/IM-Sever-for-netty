@@ -1,6 +1,5 @@
 package com.jsondream.netty.kdw.chat.server.messageHandler.businessHandler.chatHandler;
 
-import com.jsondream.netty.kdw.chat.HeaderCode;
 import com.jsondream.netty.kdw.chat.bean.ChatMessageBean;
 import com.jsondream.netty.kdw.chat.bean.MessageBean;
 import com.jsondream.netty.kdw.chat.protocol.ErrorCode;
@@ -25,7 +24,7 @@ public class PrivateChatHandler extends AbstractChatHandler {
         String toUser = chatMessage.getToUser();
         Channel toUserChannel = ChannelManager.getConn(toUser);
         // 构造参数
-        MessageBean messageBean = new MessageBean(HeaderCode.RECEIVE_MESSAGE.getCode(), chatMessage);
+        MessageBean messageBean = new MessageBean(ErrorCode.RECEIVE_MESSAGE, chatMessage);
         // 发送数据
         AppRouterManager.routeMessage(toUserChannel, messageBean);
     }

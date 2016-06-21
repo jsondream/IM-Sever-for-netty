@@ -1,7 +1,6 @@
 package com.jsondream.netty.kdw.chat.server.messageHandler;
 
 import com.jsondream.netty.kdw.chat.BusinessException;
-import com.jsondream.netty.kdw.chat.HeaderCode;
 import com.jsondream.netty.kdw.chat.bean.MessageBean;
 import com.jsondream.netty.kdw.chat.protocol.ErrorCode;
 import com.jsondream.netty.kdw.chat.server.messageHandler.businessHandler.AppMessageHandler;
@@ -23,13 +22,13 @@ public class AppMessageHandlerFactory {
     public static AppMessageHandler getAppMsgHandler(MessageBean msg) {
 
         int header = msg.getMessageType();
-        if (header == HeaderCode.LOGIN_REQUEST.getCode()) {
+        if (header == ErrorCode.LOGIN_REQUEST.getCode()) {
             // 登录
             return new LoginHandler();
-        } else if (header == HeaderCode.CHAT_REQUEST.getCode()) {
+        } else if (header == ErrorCode.CHAT_REQUEST.getCode()) {
             // 单聊
             return new ChatHandler();
-        } else if (header == HeaderCode.PING.getCode()) {
+        } else if (header == ErrorCode.PING.getCode()) {
             // ping
             return new PingHandler();
         } else {
