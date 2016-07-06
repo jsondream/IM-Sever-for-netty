@@ -1,8 +1,7 @@
 package com.jsondream.netty.kdw.chat.server;
 
-import com.jsondream.netty.chat.business.MessageDecoder;
-import com.jsondream.netty.chat.business.MessageEncoder;
-import com.jsondream.netty.chat.server.SimpleChatServerHandler;
+import com.jsondream.netty.kdw.chat.codec.MessageDecoder;
+import com.jsondream.netty.kdw.chat.codec.MessageEncoder;
 import com.jsondream.netty.kdw.chat.config.AppChatConstants;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
