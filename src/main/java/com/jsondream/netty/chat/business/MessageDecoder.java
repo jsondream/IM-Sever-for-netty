@@ -17,7 +17,6 @@ public class MessageDecoder extends MessageToMessageDecoder<ByteBuf> {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out)
         throws Exception {
-        // TODO Auto-generated method stub
         final byte[] array;
         final int length = in.readableBytes();
         array = new byte[length];
@@ -28,7 +27,6 @@ public class MessageDecoder extends MessageToMessageDecoder<ByteBuf> {
 
 	/*public MessageDecoder(int maxFrameLength, int lengthFieldOffset, int lengthFieldLength) {
     super(maxFrameLength, lengthFieldOffset, lengthFieldLength);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -44,7 +42,6 @@ public class MessageDecoder extends MessageToMessageDecoder<ByteBuf> {
 		array = new byte[length];
 		in.getBytes(frame.readerIndex(), array, 0, length);
 		return messagePack.read(array);
-		// TODO Auto-generated method stub
 		
 	}*/
 

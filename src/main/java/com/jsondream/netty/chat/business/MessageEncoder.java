@@ -8,11 +8,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
-public class MessageEncoder extends MessageToByteEncoder<Message> {
+public class MessageEncoder extends MessageToByteEncoder<Object> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, Message msg, ByteBuf out) throws Exception {
-        // TODO Auto-generated method stub
+    protected void encode(ChannelHandlerContext ctx, Object msg, ByteBuf out) throws Exception {
         //		byte[] data = SerializeUtil.serialize(msg);
         MessagePack messagePack = new MessagePack();
         byte[] data = messagePack.write(msg);

@@ -5,6 +5,7 @@ import org.msgpack.annotation.Message;
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
+@Message
 public class BaseBodyBean implements Serializable {
 
 }

@@ -1,12 +1,14 @@
 package com.jsondream.netty.kdw.chat.server;
 
 import com.jsondream.netty.kdw.chat.bean.MessageBean;
+import com.jsondream.netty.kdw.chat.server.connectionManager.AppRouterManager;
+import com.jsondream.netty.kdw.chat.server.connectionManager.ChannelManager;
 import com.jsondream.netty.kdw.chat.server.messageHandler.AppMessageHandlerFactory;
 import com.jsondream.netty.kdw.chat.server.messageHandler.businessHandler.AppMessageHandler;
+import com.jsondream.netty.kdw.chat.utils.StringUtils;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.msgpack.MessagePack;
 import org.msgpack.type.Value;
@@ -14,7 +16,7 @@ import org.msgpack.type.Value;
 import java.net.InetSocketAddress;
 
 @SuppressWarnings("rawtypes")
-public class AppChatServerHandler extends SimpleChannelInboundHandler<Object> {
+public class AppChatServerHandler extends SimpleChannelInboundHandler<MessageBean> {
 
 
     @Override
@@ -30,12 +32,12 @@ public class AppChatServerHandler extends SimpleChannelInboundHandler<Object> {
     }
 
     @Override
-    protected void messageReceived(ChannelHandlerContext ctx, Object s) throws Exception { // (4)
+    protected void messageReceived(ChannelHandlerContext ctx, MessageBean message) throws Exception { // (4)
         Channel incoming = ctx.channel();
-        MessagePack msgPack = new MessagePack();
-
-        final MessageBean message = new MessageBean();
-        msgPack.convert((Value) s, message);
+//        MessagePack msgPack = new MessagePack();
+//
+//        final MessageBean message = new MessageBean();
+//        msgPack.convert((Value) s, message);
         // 先查看是什么类型的业务
         AppMessageHandler handler= AppMessageHandlerFactory.getAppMsgHandler(message);
         // 进行相应的业务处理
@@ -54,17 +56,23 @@ public class AppChatServerHandler extends SimpleChannelInboundHandler<Object> {
 
 
         if (evt instanceof IdleStateEvent) {
-            IdleStateEvent event = (IdleStateEvent) evt;
-            if (event.state() == IdleState.READER_IDLE) {
-	                /*读超时*/
-                System.out.println("===服务端===(READER_IDLE 读超时)");
-            } else if (event.state() == IdleState.WRITER_IDLE) {
-	                /*写超时*/
-                System.out.println("===服务端===(WRITER_IDLE 写超时)");
+            String userId = ctx.channel().attr(AppAttrKeys.USER_ID).get();
+            // 验证连接可信度
+            if ( StringUtils.isEmpty(userId) || ChannelManager.getConn(userId) == null) {// 连接不可信
+                // 关闭客户端连接
                 ctx.channel().close();
-            } else if (event.state() == IdleState.ALL_IDLE) {
-	                /*总超时*/
-                System.out.println("===服务端===(ALL_IDLE 总超时)");
+                return;
+            }
+            // 空闲事件(读或者写)
+            IdleStateEvent event = (IdleStateEvent) evt;
+            // Log.info("event:" + event.state() + "--" + event.isFirst());
+            if (event.isFirst()) {
+                // 如果是第一次触发,发送心跳包
+                AppRouterManager.routePing(ctx.channel());
+            } else {
+                // 移除连接
+                ChannelManager.removeConn(userId);
+                ctx.channel().close();
             }
         }
     }

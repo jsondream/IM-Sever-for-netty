@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- *     聊天服务器启动器
+ * 聊天服务器启动器
  * </p>
  *
  * @author 王光东
@@ -32,22 +32,20 @@ public class AppChatServer {
     public void Start(int port) throws Exception {
 
         try {
-            ServerBootstrap b = new ServerBootstrap(); // (2)
-            b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class) // (3)
-                .childHandler(new AppChatServerInitializer())  //(4)
-                .option(ChannelOption.SO_BACKLOG, 1024)          // (5)
-                .childOption(ChannelOption.SO_LINGER, 0)
-                .childOption(ChannelOption.SO_REUSEADDR, true)
-                .option(ChannelOption.TCP_NODELAY, true)
-                .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
-
-            // 绑定端口，开始接收进来的连接
-            ChannelFuture f = b.bind(port).sync(); // (7)
+            ServerBootstrap bootstrap = new ServerBootstrap();
+            bootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+                .childHandler(new AppChatServerInitializer());
+            // 设置网络参数
+            setServerOption(bootstrap);
+            // 绑定端口
+            ChannelFuture f = bootstrap.bind(port).sync();
 
             if (f.isSuccess()) {
                 Log.info("IM server start success---------------");
+                System.out.println("IM server start success---------------");
+                // 开始接收进来的连接
+                f.channel().closeFuture().sync();
             }
-
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();
@@ -65,14 +63,14 @@ public class AppChatServer {
 
     }
 
-    public static void main(String[] args) throws Exception {
-        int port;
-        if (args.length > 0) {
-            port = Integer.parseInt(args[0]);
-        } else {
-            port = 8012;
-        }
-        new AppChatServer(200).Start(port);
-
+    /**
+     * 设置服务器网络参数
+     *
+     * @param bootstrap
+     */
+    public void setServerOption(ServerBootstrap bootstrap) {
+        bootstrap.option(ChannelOption.SO_BACKLOG, 1024).childOption(ChannelOption.SO_LINGER, 0)
+            .childOption(ChannelOption.SO_REUSEADDR, true).option(ChannelOption.TCP_NODELAY, true)
+            .childOption(ChannelOption.SO_KEEPALIVE, true);
     }
 }

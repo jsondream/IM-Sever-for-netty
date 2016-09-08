@@ -7,16 +7,16 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 @Message
-public class MessageBean implements Serializable {
+public class MessageBean<T extends BaseBodyBean> implements Serializable {
     private int messageType;
     private String errorMessage;
-    private BaseBodyBean message;
+    private T message;
 
     public MessageBean() {
 
     }
 
-    public MessageBean(ErrorCode errorCode, BaseBodyBean message) {
+    public MessageBean(ErrorCode errorCode, T message) {
         this.messageType = errorCode.getCode();
         this.errorMessage = errorCode.getMsg();
         this.message = message;
@@ -38,12 +38,19 @@ public class MessageBean implements Serializable {
         this.messageType = messageType;
     }
 
-    public BaseBodyBean getMessage() {
+    public T getMessage() {
         return message;
     }
 
-    public void setMessage(BaseBodyBean message) {
+    public void setMessage(T message) {
         this.message = message;
     }
+
+    public void setErrorCode(ErrorCode errorCode) {
+        this.errorMessage = errorCode.getMsg();
+        this.messageType= errorCode.getCode();
+
+    }
+
 
 }

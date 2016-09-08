@@ -23,7 +23,6 @@ public class TimeServer {
 			ChannelFuture f = b.bind(port).sync();
 			f.channel().closeFuture().sync();
 		} finally {
-			// TODO Auto-generated catch block
 			bossGroup.shutdownGracefully();
 			workerGroup.shutdownGracefully();
 		}
@@ -34,7 +33,6 @@ public class TimeServer {
 
 		@Override
 		protected void initChannel(SocketChannel arg0) throws Exception {
-			// TODO Auto-generated method stub
 			arg0.pipeline().addLast(new TimeServerHandler());
 
 		}
@@ -42,7 +40,6 @@ public class TimeServer {
 	}
 
 	public static void main(String[] args) throws InterruptedException {
-		// TODO Auto-generated method stub
 		int port = 8282;
 		new TimeServer().bind(port);
 	}

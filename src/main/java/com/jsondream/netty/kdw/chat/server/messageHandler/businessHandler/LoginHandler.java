@@ -38,10 +38,10 @@ public class LoginHandler implements AppMessageHandler<LoginBean> {
             //获取客户端Header中提交的authKey
 
             // TODO:token验证
-            String user_token = "";
+            boolean canConnection = authKey.equals("authKey");
 
             // authKey验证失效的处理
-            if ((StringUtils.isEmpty(user_token) || (!user_token.equals(authKey)))) {
+            if ((StringUtils.isEmpty(authKey) || !canConnection)) {
                 AppRouterManager.routeError(channel, ErrorCode.ERROR_AUTHED);
                 channel.close();
                 return;
