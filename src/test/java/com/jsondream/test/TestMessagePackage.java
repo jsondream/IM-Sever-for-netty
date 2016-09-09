@@ -50,19 +50,17 @@ public class TestMessagePackage {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         Packer packer = messagePack.createPacker(outputStream);
         packer.write(messageBean);
-        packer.write(message);
+        packer.write(messageBean.getMessage());
         byte[] bs = outputStream.toByteArray();
 
         // 反序列化
         ByteArrayInputStream inputStream = new ByteArrayInputStream(bs);
         Unpacker unpacker = messagePack.createUnpacker(inputStream);
         Value value= unpacker.readValue();
-        int a= unpacker.readInt();
-        String b= unpacker.readString();
-//        MessageBean unMessage= unpacker.read(MessageBean.class);
-//        // 测试反序列化结果
-//        assertNotNull(unMessage);
-//        assertTrue(unMessage.getMessageType() == messageBean.getMessageType());
+        int unMessageType = value.asArrayValue().get(0).asIntegerValue().intValue();
+        // 测试反序列化结果
+        assertTrue(unMessageType==messageBean.getMessageType());
+       // assertTrue(unMessage.getMessageType() == messageBean.getMessageType());
         ChatMessageBean messageUn = unpacker.read(ChatMessageBean.class);
         assertNotNull(messageUn);
         assertTrue(messageUn.getMsg().equals(message.getMsg()));

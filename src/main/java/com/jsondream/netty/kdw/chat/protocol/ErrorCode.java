@@ -14,7 +14,7 @@ public enum ErrorCode {
     OK(0, "OK"), fail(-1, "FAIL"),
 
     SYSTEM_ERROR(1, "系统错误"), SYSTEM_BUSY(2, "系统繁忙"), PARAM_ERROR(3, "参数错误"), CFG_ERROR(4, "配置文件错误"),
-
+    PROTOCOL_ERROR(5,"协议错误"),
     /**
      * 账号相关 1001~2000
      */

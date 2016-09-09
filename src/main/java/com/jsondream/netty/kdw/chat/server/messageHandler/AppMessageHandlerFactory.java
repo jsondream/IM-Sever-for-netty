@@ -19,9 +19,8 @@ import com.jsondream.netty.kdw.chat.server.messageHandler.businessHandler.PingHa
  */
 public class AppMessageHandlerFactory {
 
-    public static AppMessageHandler getAppMsgHandler(MessageBean msg) {
+    public static AppMessageHandler getAppMsgHandler(int header) {
 
-        int header = msg.getMessageType();
         if (header == ErrorCode.LOGIN_REQUEST.getCode()) {
             // 登录
             return new LoginHandler();
@@ -32,7 +31,7 @@ public class AppMessageHandlerFactory {
             // ping
             return new PingHandler();
         } else {
-            throw new BusinessException(ErrorCode.PARAM_ERROR);
+            throw new BusinessException(ErrorCode.PROTOCOL_ERROR);
         }
     }
 

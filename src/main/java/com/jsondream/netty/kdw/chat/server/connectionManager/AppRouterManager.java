@@ -86,4 +86,12 @@ public class AppRouterManager {
         }
     }
 
+    /**
+     * 协议错误
+     *
+     * @param channel
+     */
+    public static void routeProtocolError(Channel channel) {
+        routeError(channel, ErrorCode.PROTOCOL_ERROR);
+    }
 }

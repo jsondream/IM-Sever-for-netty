@@ -40,23 +40,6 @@ public class MessageDecoder extends MessageToMessageDecoder<ByteBuf> {
         Unpacker unpacker = messagePack.createUnpacker(inputStream);
         // 读取value值
         Value value = unpacker.readValue();
-        // 处理消息体没有遵循协议规范的情况
-        if (!value.isArrayValue()) {
-            //TODO 抛出一个异常让全局能够处理
-        }
-        ArrayValue arrayValue = value.asArrayValue();
-        // 读取消息类型
-        int type = arrayValue.get(0).asIntegerValue().getInt();
-
-        BaseBodyBean baseBodyBean = null;
-        if(type == ErrorCode.CHAT_REQUEST.getCode()){
-                // 根据协议解析消息体
-                baseBodyBean = messagePack.convert(arrayValue.get(2), ChatMessageBean.class);
-        } else {
-            //TODO 抛出一个异常让全局能够处理
-        }
-        ErrorCode errorCode = ErrorCode.getErrorCodeById(type);
-        MessageBean messageBean = new MessageBean(errorCode, baseBodyBean);
-        out.add(messageBean);
+        out.add(value);
     }
 }

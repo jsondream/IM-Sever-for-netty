@@ -5,6 +5,7 @@ import com.jsondream.netty.chat.business.Message;
 import com.jsondream.netty.chat.client.SimpleChatClientInitializer;
 import com.jsondream.netty.chat.util.ClientUtil;
 import com.jsondream.netty.kdw.chat.bean.ChatMessageBean;
+import com.jsondream.netty.kdw.chat.bean.LoginBean;
 import com.jsondream.netty.kdw.chat.bean.MessageBean;
 import com.jsondream.netty.kdw.chat.protocol.ErrorCode;
 import com.jsondream.netty.kdw.chat.server.AppChatServerInitializer;
@@ -49,20 +50,16 @@ public class AppChatClient {
                 String inputString = in.readLine();
                 String[] inputObj = inputString.split(",");
 
+                switch (inputObj[0]){
+                    case "login":
+                        loginServer(channel,inputObj[1],inputObj[2]);
+                        break;
+                    case "chat":
+                        sendChatMessage(channel,inputObj[1],inputObj[2],inputObj[3]);
+                        break;
+                    default:break;
+                }
 
-                ChatMessageBean message = new ChatMessageBean();
-                message.setId(UUID.randomUUID().toString());
-                message.setFromUser(inputObj[0]);
-                message.setToUser(inputObj[1]);
-                message.setMsg(inputObj[2]);
-                message.setChatType("chat");
-                message.setMessageType("txt");
-                message.setTimeStamp(System.currentTimeMillis());
-//                                String messageString = JSON.toJSONString(message);
-//                                byte[] messageByte = ClientUtil.getMessageByte(messageString);
-
-                MessageBean messageBean = new MessageBean(ErrorCode.CHAT_REQUEST,message);
-                ChannelFuture channelFuture = channel.writeAndFlush(messageBean);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,6 +71,32 @@ public class AppChatClient {
     }
 
 
+    public static void sendChatMessage(Channel channel,String from,String to ,String msg){
+        ChatMessageBean message = new ChatMessageBean();
+        message.setId(UUID.randomUUID().toString());
+        message.setFromUser(from);
+        message.setToUser(to);
+        message.setMsg(msg);
+        message.setChatType("chat");
+        message.setMessageType("txt");
+        message.setTimeStamp(System.currentTimeMillis());
+        //                                String messageString = JSON.toJSONString(message);
+        //                                byte[] messageByte = ClientUtil.getMessageByte(messageString);
+
+        MessageBean messageBean = new MessageBean(ErrorCode.CHAT_REQUEST,message);
+        ChannelFuture channelFuture = channel.writeAndFlush(messageBean);
+    }
+
+    public static void loginServer(Channel channel,String userId,String userName){
+        LoginBean loginBean = new LoginBean();
+        loginBean.setUserId(userId);
+        loginBean.setAuthKey("authKey");
+        loginBean.setAppVersion("v1");
+        loginBean.setPlatform("pc");
+        loginBean.setUserName(userName);
+        channel.writeAndFlush(new MessageBean(ErrorCode.LOGIN_REQUEST,loginBean));
+
+    }
 
     public static void main(String[] args) throws Exception {
         new AppChatClient().Start(8012);

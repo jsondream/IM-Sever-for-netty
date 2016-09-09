@@ -24,7 +24,8 @@ public class PrivateChatHandler extends AbstractChatHandler {
         String toUser = chatMessage.getToUser();
         Channel toUserChannel = ChannelManager.getConn(toUser);
         // 构造参数
-        MessageBean messageBean = new MessageBean(ErrorCode.RECEIVE_MESSAGE, chatMessage);
+        MessageBean<ChatMessageBean> messageBean =
+            new MessageBean<>(ErrorCode.CHAT_REQUEST, chatMessage);
         // 发送数据
         AppRouterManager.routeMessage(toUserChannel, messageBean);
     }
