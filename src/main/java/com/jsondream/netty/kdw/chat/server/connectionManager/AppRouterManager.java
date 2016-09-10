@@ -3,6 +3,7 @@ package com.jsondream.netty.kdw.chat.server.connectionManager;
 import com.jsondream.netty.kdw.chat.bean.MessageBean;
 import com.jsondream.netty.kdw.chat.protocol.ErrorCode;
 import io.netty.channel.Channel;
+import io.netty.channel.group.ChannelGroup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +82,21 @@ public class AppRouterManager {
 
         try {
             channel.writeAndFlush(msgSend);
+        } catch (Exception e) {
+            Log.error(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 直接发送消息
+     *
+     * @param channelGroup 通道
+     * @param msgSend 要发送的消息
+     */
+    public static void routeGroupMessage(ChannelGroup channelGroup, MessageBean msgSend) {
+
+        try {
+            channelGroup.writeAndFlush(msgSend);
         } catch (Exception e) {
             Log.error(e.getMessage(), e);
         }

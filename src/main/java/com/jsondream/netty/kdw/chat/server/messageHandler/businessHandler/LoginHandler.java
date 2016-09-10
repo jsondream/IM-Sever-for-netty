@@ -1,6 +1,7 @@
 package com.jsondream.netty.kdw.chat.server.messageHandler.businessHandler;
 
 import com.jsondream.netty.kdw.chat.bean.LoginBean;
+import com.jsondream.netty.kdw.chat.mock.ChatRoomMockServiceImpl;
 import com.jsondream.netty.kdw.chat.protocol.ErrorCode;
 import com.jsondream.netty.kdw.chat.server.AppAttrKeys;
 import com.jsondream.netty.kdw.chat.server.connectionManager.AppRouterManager;
@@ -9,6 +10,8 @@ import com.jsondream.netty.kdw.chat.utils.StringUtils;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * <p>
@@ -64,12 +67,21 @@ public class LoginHandler implements AppMessageHandler<LoginBean> {
             channel.attr(AppAttrKeys.APP_VERSION).set(appVersion);
             channel.attr(AppAttrKeys.PLATFORM).set(platform);
 
+            // 增加聊天室功能
+            joinGroupChannel(userId,channel);
             // 返回登录成功
             AppRouterManager.routeLoginSuccess(channel);
 
         } catch (Exception e) {
             Log.error(e.getMessage(), e);
         }
+
+    }
+
+    public void joinGroupChannel(String userId,Channel channel){
+        ChatRoomMockServiceImpl chatRoomMockService = new ChatRoomMockServiceImpl();
+        List<String> roomList = chatRoomMockService.getRoomList(userId);
+        roomList.stream().forEach(roomId -> ChannelManager.addConnGroup(roomId, channel));
 
     }
 

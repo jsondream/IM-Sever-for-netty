@@ -9,6 +9,7 @@ import com.jsondream.netty.kdw.chat.bean.LoginBean;
 import com.jsondream.netty.kdw.chat.bean.MessageBean;
 import com.jsondream.netty.kdw.chat.protocol.ErrorCode;
 import com.jsondream.netty.kdw.chat.server.AppChatServerInitializer;
+import com.jsondream.netty.kdw.chat.server.messageHandler.businessHandler.chatHandler.ChatType;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -50,14 +51,20 @@ public class AppChatClient {
                 String inputString = in.readLine();
                 String[] inputObj = inputString.split(",");
 
-                switch (inputObj[0]){
+                switch (inputObj[0]) {
                     case "login":
-                        loginServer(channel,inputObj[1],inputObj[2]);
+                        loginServer(channel, inputObj[1], inputObj[2]);
                         break;
                     case "chat":
-                        sendChatMessage(channel,inputObj[1],inputObj[2],inputObj[3]);
+                        sendChatMessage(channel, inputObj[1], inputObj[2], inputObj[3],
+                            ChatType.CHAT);
                         break;
-                    default:break;
+                    case "groupChat":
+                        sendChatMessage(channel, inputObj[1], inputObj[2], inputObj[3],
+                            ChatType.GROUP_CHAT);
+                        break;
+                    default:
+                        break;
                 }
 
             }
@@ -70,31 +77,47 @@ public class AppChatClient {
         }
     }
 
-
-    public static void sendChatMessage(Channel channel,String from,String to ,String msg){
+    /**
+     * 单聊
+     *
+     * @param channel
+     * @param from
+     * @param to
+     * @param msg
+     */
+    public static void sendChatMessage(Channel channel, String from, String to, String msg,
+        ChatType chatType) {
         ChatMessageBean message = new ChatMessageBean();
         message.setId(UUID.randomUUID().toString());
         message.setFromUser(from);
         message.setToUser(to);
         message.setMsg(msg);
-        message.setChatType("chat");
+        message.setChatType(chatType.getType());
         message.setMessageType("txt");
         message.setTimeStamp(System.currentTimeMillis());
         //                                String messageString = JSON.toJSONString(message);
         //                                byte[] messageByte = ClientUtil.getMessageByte(messageString);
 
-        MessageBean messageBean = new MessageBean(ErrorCode.CHAT_REQUEST,message);
-        ChannelFuture channelFuture = channel.writeAndFlush(messageBean);
+        MessageBean<ChatMessageBean> messageBean =
+            new MessageBean<>(ErrorCode.CHAT_REQUEST, message);
+        channel.writeAndFlush(messageBean);
     }
 
-    public static void loginServer(Channel channel,String userId,String userName){
+    /**
+     * 登录
+     *
+     * @param channel
+     * @param userId
+     * @param userName
+     */
+    public static void loginServer(Channel channel, String userId, String userName) {
         LoginBean loginBean = new LoginBean();
         loginBean.setUserId(userId);
         loginBean.setAuthKey("authKey");
         loginBean.setAppVersion("v1");
         loginBean.setPlatform("pc");
         loginBean.setUserName(userName);
-        channel.writeAndFlush(new MessageBean(ErrorCode.LOGIN_REQUEST,loginBean));
+        channel.writeAndFlush(new MessageBean<>(ErrorCode.LOGIN_REQUEST, loginBean));
 
     }
 

@@ -30,12 +30,10 @@ import java.util.Date;
 @SuppressWarnings("rawtypes")
 public class AppChatClientHandler extends SimpleChannelInboundHandler<Value> {
 
-
     @Override
     protected void messageReceived(ChannelHandlerContext ctx, Value value) throws Exception { // (4)
         Channel incoming = ctx.channel();
         MessagePack msgPack = new MessagePack();
-
 
         // 处理消息体没有遵循协议规范的情况
         if (!value.isArrayValue()) {
@@ -51,27 +49,31 @@ public class AppChatClientHandler extends SimpleChannelInboundHandler<Value> {
             // 获取消息体本身
             Value bodyValue = arrayValue.get(2);
 
-
-
             // 判断类型
             if (headerType == ErrorCode.CHAT_REQUEST.getCode()) {
                 // 根据type来解析消息体内容
-                ChatMessageBean chatMessageBean = msgPack.convert(bodyValue,ChatMessageBean.class);
+                ChatMessageBean chatMessageBean = msgPack.convert(bodyValue, ChatMessageBean.class);
                 String header = chatMessageBean.getChatType();
-                if (header.equals(ChatType.CHAT.getType())) {
+                if (header.equals(ChatType.CHAT.getType())) {// 单聊
                     System.out.println(
                         "id为[" + chatMessageBean.getFromUser() + "]的用户对你说:" + chatMessageBean
-                            .getToUser());
+                            .getMsg());
+                } else if (header.equals(ChatType.GROUP_CHAT.getType())) {// 群聊
+                    System.out.println(
+                        "您收到一条群号为[" + chatMessageBean.getFromUser() + "]的消息:" + chatMessageBean
+                            .getMsg());
+                } else {
+                    System.out.println(value);
                 }
                 return;
             }
 
-            if(headerType == ErrorCode.LOGIN_SUCCESS.getCode()){
+            if (headerType == ErrorCode.LOGIN_SUCCESS.getCode()) {
                 System.out.println(value);
                 return;
             }
 
-            if(headerType == ErrorCode.ERROR_AUTHED.getCode()){
+            if (headerType == ErrorCode.ERROR_AUTHED.getCode()) {
                 System.out.println("登录失败");
                 return;
             }
@@ -82,10 +84,6 @@ public class AppChatClientHandler extends SimpleChannelInboundHandler<Value> {
             e.printStackTrace();
         }
 
-
-
     }
-
-
 
 }

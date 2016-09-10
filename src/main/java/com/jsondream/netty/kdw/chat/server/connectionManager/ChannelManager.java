@@ -1,9 +1,14 @@
 package com.jsondream.netty.kdw.chat.server.connectionManager;
 
 import io.netty.channel.Channel;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.concurrent.GlobalEventExecutor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>
@@ -20,6 +25,13 @@ public class ChannelManager {
      * 存放所有客户端登陆连接
      */
     private static Map<String, Channel> appConnMap = new ConcurrentHashMap<>();
+
+    /**
+     * 存放所有聊天室连接  groupId-channelGroup
+     */
+    private static Map<String, DefaultChannelGroup> groupConnMap = new ConcurrentHashMap<>();
+
+    private static Lock lock = new ReentrantLock();
 
     /**
      * 添加连接
@@ -52,4 +64,31 @@ public class ChannelManager {
         return appConnMap.get(userId);
     }
 
+    /**
+     * 像群组中添加链接
+     * @param roomId
+     * @param channel
+     */
+    public static void addConnGroup(String roomId, Channel channel) {
+        DefaultChannelGroup channelGroup = groupConnMap.get(roomId);
+        if(channelGroup == null){
+            lock.lock();
+            try {
+                channelGroup = new DefaultChannelGroup(roomId + ":ChannelGroups", GlobalEventExecutor.INSTANCE);
+                groupConnMap.put(roomId,channelGroup);
+            } finally {
+                lock.unlock();
+            }
+        }
+        channelGroup.add(channel);
+    }
+
+    /**
+     * 移除连接
+     *
+     * @param roomId
+     */
+    public static DefaultChannelGroup getConnGroup(String roomId) {
+        return groupConnMap.get(roomId);
+    }
 }
