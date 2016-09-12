@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
+import sun.misc.Unsafe;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,7 +32,18 @@ public class ChannelManager {
      */
     private static Map<String, DefaultChannelGroup> groupConnMap = new ConcurrentHashMap<>();
 
+    /**
+     * 锁
+     */
     private static Lock lock = new ReentrantLock();
+
+    /**
+     * cas实现
+     */
+    private static Unsafe unsafe;
+    static {
+        unsafe = Unsafe.getUnsafe();
+    }
 
     /**
      * 添加连接
@@ -74,8 +86,14 @@ public class ChannelManager {
         if(channelGroup == null){
             lock.lock();
             try {
-                channelGroup = new DefaultChannelGroup(roomId + ":ChannelGroups", GlobalEventExecutor.INSTANCE);
-                groupConnMap.put(roomId,channelGroup);
+                // 双重检测
+                if(channelGroup == null){
+                    // TODO 讲这里换成cas的实现
+                    // unsafe.compareAndSwapObject(channelGroup ,0,null,channelGroup);
+                    channelGroup = new DefaultChannelGroup(roomId + ":ChannelGroups", GlobalEventExecutor.INSTANCE);
+                    groupConnMap.put(roomId,channelGroup);
+
+                }
             } finally {
                 lock.unlock();
             }
