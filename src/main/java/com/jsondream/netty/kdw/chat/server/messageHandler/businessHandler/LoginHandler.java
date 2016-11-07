@@ -57,6 +57,8 @@ public class LoginHandler implements AppMessageHandler<LoginBean> {
                 ChannelManager.removeConn(userId);
                 oldChannel.attr(AppAttrKeys.USER_ID).set("");
                 AppRouterManager.routeError(oldChannel, ErrorCode.HAS_LOGIN);
+                // 移除群组中的连接
+                removeChannelFromGroup(userId,oldChannel);
                 oldChannel.close();
             }
 
@@ -79,10 +81,22 @@ public class LoginHandler implements AppMessageHandler<LoginBean> {
     }
 
     public void joinGroupChannel(String userId,Channel channel){
+        // TODO 现在获取的服务是mock服务
         ChatRoomMockServiceImpl chatRoomMockService = new ChatRoomMockServiceImpl();
         List<String> roomList = chatRoomMockService.getRoomList(userId);
         roomList.stream().forEach(roomId -> ChannelManager.addConnGroup(roomId, channel));
-
     }
 
+    /**
+     * 从聊天群组中移除连接
+     * 需要作成异步的服务
+     * @param userId
+     * @param channel
+     */
+    public void removeChannelFromGroup(String userId,Channel channel){
+        // TODO 现在获取的服务是mock服务
+        ChatRoomMockServiceImpl chatRoomMockService = new ChatRoomMockServiceImpl();
+        List<String> roomList = chatRoomMockService.getRoomList(userId);
+        roomList.stream().forEach(roomId -> ChannelManager.removeConnGroup(roomId, channel));
+    }
 }

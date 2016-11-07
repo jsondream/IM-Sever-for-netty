@@ -111,6 +111,7 @@ public class AppChatServerHandler extends SimpleChannelInboundHandler<Value> {
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception { // (6)
         Channel incoming = ctx.channel();
+        String userId = incoming.attr(AppAttrKeys.USER_ID).get();
         System.out.println("SimpleChatClient:" + incoming.remoteAddress() + "掉线");
     }
 

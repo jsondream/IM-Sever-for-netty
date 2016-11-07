@@ -1,6 +1,7 @@
 package com.jsondream.netty.kdw.chat.server.connectionManager;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelId;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
@@ -31,19 +32,6 @@ public class ChannelManager {
      * 存放所有聊天室连接  groupId-channelGroup
      */
     private static Map<String, DefaultChannelGroup> groupConnMap = new ConcurrentHashMap<>();
-
-    /**
-     * 锁
-     */
-    private static Lock lock = new ReentrantLock();
-
-    /**
-     * cas实现
-     */
-    private static Unsafe unsafe;
-    static {
-        unsafe = Unsafe.getUnsafe();
-    }
 
     /**
      * 添加连接
@@ -78,27 +66,21 @@ public class ChannelManager {
 
     /**
      * 像群组中添加链接
+     *
      * @param roomId
      * @param channel
      */
     public static void addConnGroup(String roomId, Channel channel) {
         DefaultChannelGroup channelGroup = groupConnMap.get(roomId);
-        if(channelGroup == null){
-            lock.lock();
-            try {
-                // 双重检测
-                if(channelGroup == null){
-                    // TODO 讲这里换成cas的实现
-                    // unsafe.compareAndSwapObject(channelGroup ,0,null,channelGroup);
-                    channelGroup = new DefaultChannelGroup(roomId + ":ChannelGroups", GlobalEventExecutor.INSTANCE);
-                    groupConnMap.put(roomId,channelGroup);
-
-                }
-            } finally {
-                lock.unlock();
-            }
+        if (channelGroup == null) {
+            groupConnMap.putIfAbsent(roomId,
+                new DefaultChannelGroup(roomId + ":ChannelGroups", GlobalEventExecutor.INSTANCE));
+            // 添加到ChannelGroup
+            DefaultChannelGroup currentGroupConnMap = groupConnMap.get(roomId);
+            currentGroupConnMap.add(channel);
+        } else {
+            channelGroup.add(channel);
         }
-        channelGroup.add(channel);
     }
 
     /**
@@ -108,5 +90,17 @@ public class ChannelManager {
      */
     public static DefaultChannelGroup getConnGroup(String roomId) {
         return groupConnMap.get(roomId);
+    }
+
+    /**
+     * 删除ChannelGroup中对应的连接
+     * @param roomId
+     * @param channel
+     */
+    public static void removeConnGroup(String roomId, Channel channel) {
+        DefaultChannelGroup connGroup = getConnGroup(roomId);
+        if (connGroup != null) {
+            connGroup.remove(channel);
+        }
     }
 }
